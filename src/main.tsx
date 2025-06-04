@@ -5,6 +5,6 @@ import TicTacToe from "./TicTacToe";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <TicTacToe size={10} />
+    <TicTacToe />
   </StrictMode>
 );
