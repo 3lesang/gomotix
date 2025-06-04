@@ -37,13 +37,13 @@ const BOARD_CONFIGS: BoardConfig[] = [
   { size: 5, winLength: 4, name: "5x5 (4 in a row)" },
   { size: 7, winLength: 5, name: "7x7 (5 in a row)" },
   { size: 10, winLength: 5, name: "10x10 (5 in a row)" },
-  { size: 15, winLength: 5, name: "15x15 Gomoku" },
+  { size: 20, winLength: 5, name: "15x15 Gomoku" },
 ];
 
 const MultiCaroGame: React.FC = () => {
   // State management
-  const [boardSize, setBoardSize] = useState<number>(3);
-  const [winLength, setWinLength] = useState<number>(3);
+  const [boardSize, setBoardSize] = useState<number>(25);
+  const [winLength, setWinLength] = useState<number>(5);
   const [gameState, setGameState] = useState<GameState>({
     board: [],
     currentPlayer: X,
@@ -234,7 +234,7 @@ const MultiCaroGame: React.FC = () => {
     const baseSize = getCellSize();
     const isWinner = isWinningCell(row, col);
 
-    let baseClass = `${baseSize} border border-blue-400 flex items-center justify-center font-bold cursor-pointer transition-all duration-200`;
+    let baseClass = `${baseSize} border border-blue-300 flex items-center justify-center font-bold cursor-pointer transition-all duration-200`;
 
     // Add winning cell highlighting
     if (isWinner) {
@@ -260,7 +260,7 @@ const MultiCaroGame: React.FC = () => {
 
   // Get grid CSS class
   const getGridClass = (): string => {
-    return "grid bg-gray-200 p-4 rounded-xl shadow-inner";
+    return "grid bg-gray-200 border border-blue-200";
   };
 
   // Get grid style
@@ -303,14 +303,10 @@ const MultiCaroGame: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center p-6 bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-4xl">
-        <h1 className="text-4xl font-bold text-center mb-6 text-blue-600">
-          Multi-Size Caro Game (TypeScript)
-        </h1>
-
+    <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen">
+      <div className="max-w-4xl">
         {/* Board Size Selection */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <h3 className="text-lg font-semibold text-gray-700 mb-3 text-center">
             Choose Board Size:
           </h3>
@@ -329,14 +325,14 @@ const MultiCaroGame: React.FC = () => {
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Game Status */}
-        <div className="text-center mb-6">
+        {/* <div className="text-center">
           <div className="text-xl font-semibold text-gray-700">
             {renderStatusMessage()}
           </div>
-        </div>
+        </div> */}
 
         {/* Game Board */}
         <div className="flex justify-center mb-6">
@@ -356,29 +352,13 @@ const MultiCaroGame: React.FC = () => {
         </div>
 
         {/* Control Buttons */}
-        <div className="text-center mb-6">
+        <div className="text-center">
           <button
             onClick={resetGame}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-lg text-lg"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-lg text-lg cursor-pointer"
           >
             New Game
           </button>
-        </div>
-
-        {/* Instructions */}
-        <div className="text-sm text-gray-600 text-center max-w-2xl mx-auto">
-          <p className="font-semibold mb-2">How to Play:</p>
-          <p>
-            Choose your board size above. Get{" "}
-            <strong>{winLength} in a row</strong> to win on the current{" "}
-            {boardSize}×{boardSize} board! Players take turns placing X and O.
-            First to get the required number in a row (horizontally, vertically,
-            or diagonally) wins!
-          </p>
-          <p className="mt-2 text-xs text-gray-500">
-            Game Status: {gameState.status} | Current Player:{" "}
-            {gameState.currentPlayer}
-          </p>
         </div>
       </div>
     </div>
