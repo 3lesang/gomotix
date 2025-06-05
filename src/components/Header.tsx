@@ -14,6 +14,9 @@ export default function Header() {
         <Link to="/swap" className="hover:underline">
           Swap
         </Link>
+        <Link to="/leaderboard" className="hover:underline">
+          Leaderboard
+        </Link>
       </nav>
       <div className="flex-1" />
       {/* <ConnectButton /> */}

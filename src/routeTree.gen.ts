@@ -15,6 +15,7 @@ import { Route as PlayImport } from './routes/play'
 import { Route as IndexImport } from './routes/index'
 import { Route as SwapIndexImport } from './routes/swap/index'
 import { Route as RoomIndexImport } from './routes/room/index'
+import { Route as LeaderboardIndexImport } from './routes/leaderboard/index'
 import { Route as RoomIdImport } from './routes/room/$id'
 
 // Create/Update Routes
@@ -40,6 +41,12 @@ const SwapIndexRoute = SwapIndexImport.update({
 const RoomIndexRoute = RoomIndexImport.update({
   id: '/room/',
   path: '/room/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LeaderboardIndexRoute = LeaderboardIndexImport.update({
+  id: '/leaderboard/',
+  path: '/leaderboard/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -74,6 +81,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomIdImport
       parentRoute: typeof rootRoute
     }
+    '/leaderboard/': {
+      id: '/leaderboard/'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/room/': {
       id: '/room/'
       path: '/room'
@@ -97,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/play': typeof PlayRoute
   '/room/$id': typeof RoomIdRoute
+  '/leaderboard': typeof LeaderboardIndexRoute
   '/room': typeof RoomIndexRoute
   '/swap': typeof SwapIndexRoute
 }
@@ -105,6 +120,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/play': typeof PlayRoute
   '/room/$id': typeof RoomIdRoute
+  '/leaderboard': typeof LeaderboardIndexRoute
   '/room': typeof RoomIndexRoute
   '/swap': typeof SwapIndexRoute
 }
@@ -114,16 +130,24 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/play': typeof PlayRoute
   '/room/$id': typeof RoomIdRoute
+  '/leaderboard/': typeof LeaderboardIndexRoute
   '/room/': typeof RoomIndexRoute
   '/swap/': typeof SwapIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/play' | '/room/$id' | '/room' | '/swap'
+  fullPaths: '/' | '/play' | '/room/$id' | '/leaderboard' | '/room' | '/swap'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/play' | '/room/$id' | '/room' | '/swap'
-  id: '__root__' | '/' | '/play' | '/room/$id' | '/room/' | '/swap/'
+  to: '/' | '/play' | '/room/$id' | '/leaderboard' | '/room' | '/swap'
+  id:
+    | '__root__'
+    | '/'
+    | '/play'
+    | '/room/$id'
+    | '/leaderboard/'
+    | '/room/'
+    | '/swap/'
   fileRoutesById: FileRoutesById
 }
 
@@ -131,6 +155,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PlayRoute: typeof PlayRoute
   RoomIdRoute: typeof RoomIdRoute
+  LeaderboardIndexRoute: typeof LeaderboardIndexRoute
   RoomIndexRoute: typeof RoomIndexRoute
   SwapIndexRoute: typeof SwapIndexRoute
 }
@@ -139,6 +164,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PlayRoute: PlayRoute,
   RoomIdRoute: RoomIdRoute,
+  LeaderboardIndexRoute: LeaderboardIndexRoute,
   RoomIndexRoute: RoomIndexRoute,
   SwapIndexRoute: SwapIndexRoute,
 }
@@ -156,6 +182,7 @@ export const routeTree = rootRoute
         "/",
         "/play",
         "/room/$id",
+        "/leaderboard/",
         "/room/",
         "/swap/"
       ]
@@ -168,6 +195,9 @@ export const routeTree = rootRoute
     },
     "/room/$id": {
       "filePath": "room/$id.tsx"
+    },
+    "/leaderboard/": {
+      "filePath": "leaderboard/index.tsx"
     },
     "/room/": {
       "filePath": "room/index.tsx"
