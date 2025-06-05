@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState, type JSX } from "react";
+import { Button } from "./components/ui/button";
 
 // Type definitions
 type CellValue = "" | "X" | "O";
@@ -42,7 +43,7 @@ const BOARD_CONFIGS: BoardConfig[] = [
 
 const MultiCaroGame: React.FC = () => {
   // State management
-  const [boardSize, setBoardSize] = useState<number>(25);
+  const [boardSize, setBoardSize] = useState<number>(20);
   const [winLength, setWinLength] = useState<number>(5);
   const [gameState, setGameState] = useState<GameState>({
     board: [],
@@ -234,11 +235,11 @@ const MultiCaroGame: React.FC = () => {
     const baseSize = getCellSize();
     const isWinner = isWinningCell(row, col);
 
-    let baseClass = `${baseSize} border border-blue-300 flex items-center justify-center font-bold cursor-pointer transition-all duration-200`;
+    let baseClass = `${baseSize} border-b border-r border-gray-300 flex items-center justify-center font-bold cursor-pointer transition-all duration-200`;
 
     // Add winning cell highlighting
     if (isWinner) {
-      baseClass += " animate-pulse shadow-lg transform scale-110";
+      baseClass += " border-none animate-pulse shadow-lg transform scale-110";
       if (value === X) {
         baseClass += " bg-red-200 text-red-700 border-red-400";
       } else {
@@ -260,7 +261,7 @@ const MultiCaroGame: React.FC = () => {
 
   // Get grid CSS class
   const getGridClass = (): string => {
-    return "grid bg-gray-200 border border-blue-200";
+    return "grid border-t border-l border-gray-300";
   };
 
   // Get grid style
@@ -303,7 +304,7 @@ const MultiCaroGame: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen">
+    <div className="flex flex-col items-center justify-center">
       <div className="max-w-4xl">
         {/* Board Size Selection */}
         {/* <div className="mb-6">
@@ -353,12 +354,7 @@ const MultiCaroGame: React.FC = () => {
 
         {/* Control Buttons */}
         <div className="text-center">
-          <button
-            onClick={resetGame}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-lg text-lg cursor-pointer"
-          >
-            New Game
-          </button>
+          <Button onClick={resetGame}>New Game</Button>
         </div>
       </div>
     </div>
