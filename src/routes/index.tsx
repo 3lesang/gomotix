@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/pagination";
 import { convertLargeNumberToString } from "@/lib/utils";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { EyeIcon, KeyIcon, SearchIcon } from "lucide-react";
+import { DollarSignIcon, EyeIcon, KeyIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 
 type RoomType = {
@@ -35,6 +35,7 @@ type RoomType = {
   title: string;
   players: number;
   views: number;
+  cost?: number;
   password?: boolean;
 };
 
@@ -43,6 +44,7 @@ const rooms: RoomType[] = [
     id: "room-1",
     title: "Malachi Glenn",
     players: 2,
+    cost: 100,
     views: 10,
   },
   {
@@ -50,12 +52,14 @@ const rooms: RoomType[] = [
     title: "Neve Haley",
     players: 3,
     views: 2000,
+    cost: 1200,
     password: true,
   },
   {
     id: "room-3",
     title: "Melvin Wiley",
     players: 1,
+    cost: 200,
     views: 500400,
     password: true,
   },
@@ -132,10 +136,14 @@ function RouteComponent() {
                 ) : null}
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center">
+                  <Badge className="bg-yellow-600">
+                    <p>{convertLargeNumberToString(room?.cost || 0)}</p>
+                    <DollarSignIcon />
+                  </Badge>
                   <Badge variant="secondary">
+                    <p>{convertLargeNumberToString(room.views)}</p>
                     <EyeIcon />
-                    {convertLargeNumberToString(room.views)}
                   </Badge>
                 </div>
               </CardContent>
