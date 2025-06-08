@@ -30,7 +30,8 @@ function RouteComponent() {
 }
 
 function GameWrapper() {
-  const { currentPlayer } = useGame();
+  const { currentPlayer, winner, clear } = useGame();
+
   return (
     <ContentContainer
       title="New Game"
@@ -52,7 +53,10 @@ function GameWrapper() {
                 <CircleIcon className="text-blue-500 w-5 h-5" />
               </div>
               <div className="flex-1" />
-              <CountDown count={10} pause={currentPlayer == "x"} />
+              <CountDown
+                count={10}
+                pause={currentPlayer == "x" || Boolean(winner)}
+              />
             </div>
 
             <div className="h-4" />
@@ -70,7 +74,10 @@ function GameWrapper() {
                 <XIcon className="text-red-500" />
               </div>
               <div className="flex-1" />
-              <CountDown count={10} pause={currentPlayer == "o"} />
+              <CountDown
+                count={10}
+                pause={currentPlayer == "o" || Boolean(winner)}
+              />
             </div>
           </div>
           <div className="col-span-4">
@@ -88,6 +95,10 @@ function GameWrapper() {
                 <NewGameForm />
               </DialogContent>
             </Dialog>
+            <div className="mt-4"></div>
+            <Button className="w-full font-extrabold" onClick={clear}>
+              Restart
+            </Button>
           </div>
         </div>
       </div>

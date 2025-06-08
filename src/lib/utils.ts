@@ -21,7 +21,7 @@ export function checkWinnerMap(
   row: number,
   col: number,
   player: string
-): { winner: string; line: [number, number][] } | null {
+): { winner: string; line: Set<string> } | null {
   const directions = [
     [0, 1], // →
     [1, 0], // ↓
@@ -32,14 +32,15 @@ export function checkWinnerMap(
   const getKey = (r: number, c: number) => `${r},${c}`;
 
   for (const [dx, dy] of directions) {
-    const line: [number, number][] = [[row, col]];
+    const line = new Set<string>();
+    line.add(getKey(row, col));
 
     // Forward
     for (let i = 1; i < 5; i++) {
       const r = row + dx * i;
       const c = col + dy * i;
       if (board.get(getKey(r, c)) !== player) break;
-      line.push([r, c]);
+      line.add(getKey(r, c));
     }
 
     // Backward
@@ -47,10 +48,10 @@ export function checkWinnerMap(
       const r = row - dx * i;
       const c = col - dy * i;
       if (board.get(getKey(r, c)) !== player) break;
-      line.push([r, c]);
+      line.add(getKey(r, c));
     }
 
-    if (line.length >= 5) {
+    if (line.size >= 5) {
       return { winner: player, line };
     }
   }
