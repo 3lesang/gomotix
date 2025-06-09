@@ -14,6 +14,8 @@ function Board() {
     currentPlayer,
     changePlayer,
     winner,
+    status,
+    setStatus,
   } = useGame();
 
   const handleClick = (row: number, col: number) => {
@@ -22,6 +24,7 @@ function Board() {
     const result = checkWinnerMap(clickedPositions, row, col, currentPlayer);
     changePlayer();
     if (!result) return;
+    setStatus?.("finished");
     updateWinPositions(result.line);
     setGameWinner(result.winner as Player);
   };
@@ -72,7 +75,7 @@ function Board() {
                   className={cn(
                     "hover:bg-blue-50 disabled:hover:bg-transparent w-full h-full flex items-center justify-center"
                   )}
-                  disabled={isClicked(row, col) || !!winner}
+                  disabled={isClicked(row, col) || status !== "playing"}
                   onClick={() => handleClick(row, col)}
                 >
                   {renderPlayer(row, col)}

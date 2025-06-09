@@ -3,6 +3,8 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 export type Player = "x" | "o";
 
 type GameContextType = {
+  status?: "waiting" | "playing" | "finished";
+  setStatus?: (status: "waiting" | "playing" | "finished") => void;
   clickedPositions: Map<string, Player>;
   updateWinPositions: (positions: Set<string>) => void;
   winPosition: Set<string>;
@@ -17,6 +19,9 @@ type GameContextType = {
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
+  const [status, setStatus] = useState<"waiting" | "playing" | "finished">(
+    "waiting"
+  );
   const [clickedPositions, setClickedPositions] = useState(new Map());
   const [winPosition, setWinPosition] = useState<Set<string>>(new Set());
 
@@ -57,6 +62,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   return (
     <GameContext.Provider
       value={{
+        status,
+        setStatus,
         currentPlayer,
         changePlayer,
         clickedPositions,

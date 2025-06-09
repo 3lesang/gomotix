@@ -1,25 +1,19 @@
 import Board from "@/components/gomuku/Board";
 import { GameProvider, useGame } from "@/components/gomuku/context/GameContext";
 import CountDown, { type CountDownHandle } from "@/components/gomuku/CountDown";
-import NewGameForm from "@/components/NewGameForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
-import { CircleIcon, XIcon } from "lucide-react";
+import { CircleIcon, CoinsIcon, XIcon } from "lucide-react";
 import { useRef } from "react";
+import InviteFriend from "./InviteFriend";
+import WinnerPopup from "./WinnerPopup";
+import { Badge } from "../ui/badge";
 
 function MainWrapper() {
   const timerRefO = useRef<CountDownHandle>(null);
   const timerRefX = useRef<CountDownHandle>(null);
-  const { currentPlayer, winner, clear } = useGame();
+  const { currentPlayer, setStatus, clear, status, setGameWinner } = useGame();
 
   const handleRestart = () => {
     timerRefO.current?.restart();
@@ -29,6 +23,7 @@ function MainWrapper() {
   const handleClick = () => {
     clear?.();
     handleRestart();
+    setStatus?.("playing");
   };
 
   return (
@@ -44,14 +39,26 @@ function MainWrapper() {
                 />
                 <AvatarFallback>ER</AvatarFallback>
               </Avatar>
-              <p className="font-semibold">New User</p>
+              <div>
+                <div className="flex items-center gap-1">
+                  <p className="font-semibold">0xfc...4320</p>
+                  <Badge className="ml-2">100$</Badge>
+                </div>
+                <p className="text-xs text-gray-500">Player</p>
+              </div>
               <CircleIcon className="text-blue-500 w-5 h-5" />
             </div>
             <div className="flex-1" />
             <CountDown
               count={10}
               ref={timerRefO}
-              pause={currentPlayer == "x" || Boolean(winner)}
+              pause={currentPlayer == "x" || status !== "playing"}
+              onCountEnd={() => {
+                if (status === "playing") {
+                  setStatus?.("finished");
+                  setGameWinner("x");
+                }
+              }}
             />
           </div>
 
@@ -65,7 +72,13 @@ function MainWrapper() {
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              <p className="font-semibold">Sang Le</p>
+              <div>
+                <div className="flex items-center gap-1">
+                  <p className="font-semibold">0xfe...5520</p>
+                  <Badge className="ml-2">100$</Badge>
+                </div>
+                <p className="text-xs text-gray-500">Host</p>
+              </div>
               🇻🇳
               <XIcon className="text-red-500" />
             </div>
@@ -73,31 +86,38 @@ function MainWrapper() {
             <CountDown
               count={10}
               ref={timerRefX}
-              pause={currentPlayer == "o" || Boolean(winner)}
+              pause={currentPlayer == "o" || status !== "playing"}
+              onCountEnd={() => {
+                if (status === "playing") {
+                  setStatus?.("finished");
+                  setGameWinner("o");
+                }
+              }}
             />
           </div>
         </div>
         <div className="col-span-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="w-full font-extrabold bg-blue-500 hover:bg-blue-600 transition-colors">
-                New Game
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>New Game?</DialogTitle>
-                <DialogDescription>Setting room</DialogDescription>
-              </DialogHeader>
-              <NewGameForm />
-            </DialogContent>
-          </Dialog>
+          <div className="mb-4">
+            <div className="ml-auto w-fit flex p-2 gap-2">
+              <CoinsIcon />
+              <div>
+                <p className="font-bold">200</p>
+              </div>
+            </div>
+          </div>
+
           <div className="mt-4"></div>
-          <Button className="w-full font-extrabold" onClick={handleClick}>
-            Restart
+          <InviteFriend />
+          <div className="mt-4"></div>
+          <Button
+            className="w-full font-extrabold bg-blue-500 hover:bg-blue-600 text-white"
+            onClick={handleClick}
+          >
+            Start Game
           </Button>
         </div>
       </div>
+      <WinnerPopup />
     </div>
   );
 }

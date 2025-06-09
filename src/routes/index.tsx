@@ -6,6 +6,7 @@ import {
   Card,
   CardAction,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -27,12 +28,11 @@ import {
 } from "@/components/ui/pagination";
 import { convertLargeNumberToString } from "@/lib/utils";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { DollarSignIcon, EyeIcon, KeyIcon, SearchIcon } from "lucide-react";
+import { DollarSignIcon, KeyIcon, SearchIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
 
 type RoomType = {
   id: string;
-  title: string;
   players: number;
   views: number;
   cost?: number;
@@ -42,14 +42,12 @@ type RoomType = {
 const rooms: RoomType[] = [
   {
     id: "room-1",
-    title: "Malachi Glenn",
     players: 2,
     cost: 100,
     views: 10,
   },
   {
     id: "room-2",
-    title: "Neve Haley",
     players: 3,
     views: 2000,
     cost: 1200,
@@ -57,34 +55,31 @@ const rooms: RoomType[] = [
   },
   {
     id: "room-3",
-    title: "Melvin Wiley",
     players: 1,
     cost: 200,
     views: 500400,
     password: true,
   },
-  { id: "room-2", title: "Neve Haley", players: 3, views: 200 },
-  { id: "room-3", title: "Melvin Wiley", players: 1, views: 500 },
-  { id: "room-4", title: "John Doe", players: 2, views: 1000, password: true },
-  { id: "room-5", title: "Jane Smith", players: 4, views: 3000 },
+  { id: "room-2", players: 3, views: 200 },
+  { id: "room-3", players: 1, views: 500 },
+  { id: "room-4", players: 2, views: 1000, password: true },
+  { id: "room-5", players: 4, views: 3000 },
   {
     id: "room-6",
-    title: "Alice Johnson",
     players: 2,
     views: 1500,
     password: true,
   },
-  { id: "room-7", title: "Bob Brown", players: 3, views: 2500 },
-  { id: "room-8", title: "Charlie Davis", players: 2, views: 1200 },
+  { id: "room-7", players: 3, views: 2500 },
+  { id: "room-8", players: 2, views: 1200 },
   {
     id: "room-9",
-    title: "Diana Prince",
     players: 1,
     views: 800,
     password: true,
   },
-  { id: "room-10", title: "Ethan Hunt", players: 2, views: 600 },
-  { id: "room-11", title: "Fiona Gallagher", players: 3, views: 900 },
+  { id: "room-10", players: 2, views: 600 },
+  { id: "room-11", players: 3, views: 900 },
 ];
 
 export const Route = createFileRoute("/")({
@@ -98,6 +93,7 @@ function RouteComponent() {
   const handleSubmit = (values: PassFormValues) => {
     setOpen(false);
     navigate({ to: "/room/$id", params: { id: "test" } });
+    console.log("Password submitted:", values.password);
   };
 
   const handleCardClick = (room: RoomType) => {
@@ -128,7 +124,7 @@ function RouteComponent() {
               className="bg-gray-100 hover:bg-gray-50 hover:cursor-pointer transition-colors"
             >
               <CardHeader>
-                <CardTitle className="line-clamp-1">{room.title}</CardTitle>
+                <CardTitle className="line-clamp-1">#{room.id}</CardTitle>
                 {room.password ? (
                   <CardAction>
                     <KeyIcon className="h-3 w-3" />
@@ -136,17 +132,22 @@ function RouteComponent() {
                 ) : null}
               </CardHeader>
               <CardContent>
+                <div className="bg-green-200 text-xs text-green-800 w-fit rounded-md px-2 py-1">
+                  Waiting
+                </div>
+              </CardContent>
+              <CardFooter>
                 <div className="flex items-center">
-                  <Badge className="bg-yellow-600">
+                  <Badge variant="secondary">
+                    <p>{convertLargeNumberToString(room.players)}</p>
+                    <UserIcon />
+                  </Badge>
+                  <Badge className="ml-2">
                     <p>{convertLargeNumberToString(room?.cost || 0)}</p>
                     <DollarSignIcon />
                   </Badge>
-                  <Badge variant="secondary">
-                    <p>{convertLargeNumberToString(room.views)}</p>
-                    <EyeIcon />
-                  </Badge>
                 </div>
-              </CardContent>
+              </CardFooter>
             </Card>
           ))}
         </div>

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Button } from "./ui/button";
+import CustomConnectButton from "./CustomConnectButton";
+import { ConnectButton } from "@mysten/dapp-kit";
 
 export default function Header() {
   return (
@@ -19,8 +20,8 @@ export default function Header() {
         </Link>
       </nav>
       <div className="flex-1" />
+      <CustomConnectButton />
       {/* <ConnectButton /> */}
-      <Button>Connect Wallet</Button>
     </header>
   );
 }
