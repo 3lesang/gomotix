@@ -1,5 +1,5 @@
 import ContentContainer from "@/components/ContentContainer";
-import MultiCaroGame from "@/MultiCaroGame";
+import Game from "@/components/gomuku/Main";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/room/$id")({
@@ -12,7 +12,7 @@ function RouteComponent() {
       title="Room"
       description="Join or create a room to play Gomoku with friends or random players."
     >
-      <MultiCaroGame />
+      <Game />
     </ContentContainer>
   );
 }

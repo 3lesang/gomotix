@@ -1,4 +1,4 @@
-import { useGame, type Player } from "@/context/GameContext";
+import { useGame, type Player } from "@/components/gomuku/context/GameContext";
 import { checkWinnerMap, cn } from "@/lib/utils";
 import { CircleIcon, XIcon } from "lucide-react";
 
