@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import CustomConnectButton from "./CustomConnectButton";
-import { ConnectButton } from "@mysten/dapp-kit";
 
 export default function Header() {
   return (
@@ -21,7 +20,6 @@ export default function Header() {
       </nav>
       <div className="flex-1" />
       <CustomConnectButton />
-      {/* <ConnectButton /> */}
     </header>
   );
 }
