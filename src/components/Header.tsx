@@ -5,7 +5,7 @@ export default function Header() {
   return (
     <header className="p-2 flex items-center gap-2">
       <Link to="/" className="hover:underline">
-        <h1 className="text-2xl font-bold">Gomoku.io</h1>
+        <h1 className="text-2xl font-bold">Gomotix.io</h1>
       </Link>
       <nav className="flex gap-2">
         <Link to="/room" className="hover:underline">

@@ -9,7 +9,7 @@ function RouteComponent() {
   return (
     <ContentContainer
       title="Leaderboard"
-      description="List top players and their scores in Gomoku."
+      description="List top players and their scores in Gomotix."
     ></ContentContainer>
   );
 }

@@ -10,7 +10,7 @@ function RouteComponent() {
   return (
     <ContentContainer
       title="Room"
-      description="Join or create a room to play Gomoku with friends or random players."
+      description="Join or create a room to play Gomotix with friends or random players."
     >
       <Game />
     </ContentContainer>

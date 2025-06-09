@@ -111,7 +111,7 @@ function RouteComponent() {
 
   return (
     <ContentContainer
-      title="Welcome to Gomoku.io"
+      title="Welcome to Gomotix.io"
       description="Browse through the latest games played by our community. Click on a card to view details or join a game."
     >
       <div className="max-w-4xl mx-auto">
