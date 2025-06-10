@@ -79,7 +79,6 @@ const rooms: RoomType[] = [
     password: true,
   },
   { id: "room-10", players: 2, views: 600 },
-  { id: "room-11", players: 3, views: 900 },
 ];
 
 export const Route = createFileRoute("/")({
@@ -116,7 +115,7 @@ function RouteComponent() {
             <SearchIcon />
           </Button>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 my-4">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 my-4">
           {rooms.map((room, index) => (
             <Card
               key={index}
