@@ -27,11 +27,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { convertLargeNumberToString } from "@/lib/utils";
-import {
-  useCurrentAccount,
-  useSuiClient,
-  useSuiClientQuery,
-} from "@mysten/dapp-kit";
+import { useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { KeyIcon, SearchIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
@@ -94,7 +90,6 @@ function RouteComponent() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const account = useCurrentAccount();
-  const client = useSuiClient();
 
   const { data } = useSuiClientQuery(
     "getOwnedObjects",

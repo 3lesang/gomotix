@@ -14,6 +14,7 @@ import {
 import {
   useConnectWallet,
   useCurrentAccount,
+  useCurrentWallet,
   useDisconnectWallet,
   useSuiClientQuery,
   useWallets,
@@ -37,6 +38,7 @@ const formatBalance = (balance: string) => {
 function CustomConnectButton() {
   const wallets = useWallets();
   const account = useCurrentAccount();
+  const wallet = useCurrentWallet();
   const { mutate: connect } = useConnectWallet();
   const { mutate: disconnect } = useDisconnectWallet();
 
@@ -63,12 +65,20 @@ function CustomConnectButton() {
             <ChevronDown />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-fit p-1">
+        <PopoverContent className="w-34 p-1">
+          <div className="flex item-center p-2 rounded-md hover:bg-gray-100 cursor-pointer">
+            <Avatar className="rounded w-5 h-5 mr-2">
+              <AvatarImage src={wallet.currentWallet?.icon} />
+            </Avatar>
+            <p className="text-sm font-semibold">
+              {account.address.slice(0, 4)}...{account.address.slice(-4)}
+            </p>
+          </div>
+          <div className="h-1 border-t my-1" />
           <Button className="w-full" variant="ghost">
             <SettingsIcon />
             Setting
           </Button>
-          <div className="h-1 border-t my-1" />
           <Button
             variant="ghost"
             className="w-full text-red-500 hover:no-underline hover:text-red-500"
