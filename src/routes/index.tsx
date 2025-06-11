@@ -1,10 +1,10 @@
 import ContentContainer from "@/components/ContentContainer";
 import PassForm, { type PassFormValues } from "@/components/PassForm";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
   CardFooter,
   CardHeader,
@@ -27,8 +27,13 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { convertLargeNumberToString } from "@/lib/utils";
+import {
+  useCurrentAccount,
+  useSuiClient,
+  useSuiClientQuery,
+} from "@mysten/dapp-kit";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { DollarSignIcon, KeyIcon, SearchIcon, UserIcon } from "lucide-react";
+import { KeyIcon, SearchIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
 
 type RoomType = {
@@ -88,6 +93,19 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const account = useCurrentAccount();
+  const client = useSuiClient();
+
+  const { data } = useSuiClientQuery(
+    "getOwnedObjects",
+    {
+      owner: account?.address!,
+      options: { showContent: true },
+    },
+    { enabled: !!account?.address }
+  );
+
+  console.log(data);
 
   const handleSubmit = (values: PassFormValues) => {
     setOpen(false);
@@ -124,11 +142,6 @@ function RouteComponent() {
             >
               <CardHeader>
                 <CardTitle className="line-clamp-1">#{room.id}</CardTitle>
-                {room.password ? (
-                  <CardAction>
-                    <KeyIcon className="h-3 w-3" />
-                  </CardAction>
-                ) : null}
               </CardHeader>
               <CardContent>
                 <div className="bg-green-200 text-xs text-green-800 w-fit rounded-md px-2 py-1">
@@ -141,10 +154,17 @@ function RouteComponent() {
                     <p>{convertLargeNumberToString(room.players)}</p>
                     <UserIcon />
                   </Badge>
-                  <Badge className="ml-2">
+                  <Badge className="ml-2" variant="secondary">
                     <p>{convertLargeNumberToString(room?.cost || 0)}</p>
-                    <DollarSignIcon />
+                    <Avatar className="rounded w-5 h-5">
+                      <AvatarImage src="https://imagedelivery.net/cBNDGgkrsEA-b_ixIp9SkQ/sui-coin.svg/public" />
+                    </Avatar>
                   </Badge>
+                  {room.password ? (
+                    <Badge variant="secondary">
+                      <KeyIcon className="h-3 w-3" />
+                    </Badge>
+                  ) : null}
                 </div>
               </CardFooter>
             </Card>

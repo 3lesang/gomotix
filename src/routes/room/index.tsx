@@ -1,5 +1,5 @@
 import ContentContainer from "@/components/ContentContainer";
-import NewGameForm from "@/components/NewGameForm";
+import NewGameForm, { type NewGameFormValues } from "@/components/NewGameForm";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,6 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { PACKAGE_ID } from "@/const";
+import {
+  useCurrentAccount,
+  useSignAndExecuteTransaction,
+  useSuiClient,
+} from "@mysten/dapp-kit";
+import { Transaction } from "@mysten/sui/transactions";
 
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -17,6 +24,50 @@ export const Route = createFileRoute("/room/")({
 });
 
 function RouteComponent() {
+  const client = useSuiClient();
+
+  const account = useCurrentAccount();
+
+  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+
+  const handleSubmit = async (values: NewGameFormValues) => {
+    const { betAmount: stakeSui } = values;
+    if (!account) {
+      return;
+    }
+    const { data: coins } = await client.getCoins({
+      owner: account.address,
+      coinType: "0x2::sui::SUI",
+    });
+    const stakeMist = Math.floor(stakeSui * 1_000_000_000);
+    const coin = coins.find((c) => parseInt(c.balance) >= stakeMist);
+    if (!coin) {
+      return;
+    }
+    const tx = new Transaction();
+
+    const [stakeCoin] = tx.splitCoins(tx.object(coin.coinObjectId), [
+      tx.pure.u64(stakeMist),
+    ]);
+
+    tx.moveCall({
+      target: `${PACKAGE_ID}::gomotix::create_room`,
+      arguments: [stakeCoin],
+    });
+
+    signAndExecute(
+      { transaction: tx },
+      {
+        onSuccess: (result) => {
+          console.log("Transaction digest:", result.digest);
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+      }
+    );
+  };
+
   return (
     <ContentContainer
       title="New Game"
@@ -25,9 +76,7 @@ function RouteComponent() {
       <div className="flex justify-center items-center">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="font-extrabold bg-blue-500 hover:bg-blue-600 transition-colors">
-              New Game
-            </Button>
+            <Button className="font-extrabold">New Game</Button>
           </DialogTrigger>
           <DialogContent className="w-96">
             <DialogHeader>
@@ -37,7 +86,7 @@ function RouteComponent() {
                 Gomotix match!
               </DialogDescription>
             </DialogHeader>
-            <NewGameForm />
+            <NewGameForm onSubmit={handleSubmit} />
           </DialogContent>
         </Dialog>
       </div>

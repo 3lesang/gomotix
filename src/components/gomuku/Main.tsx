@@ -2,13 +2,14 @@ import Board from "@/components/gomuku/Board";
 import { GameProvider, useGame } from "@/components/gomuku/context/GameContext";
 import CountDown, { type CountDownHandle } from "@/components/gomuku/CountDown";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
-import { CircleIcon, CoinsIcon, XIcon } from "lucide-react";
+import { CircleIcon, XIcon } from "lucide-react";
 import { useRef } from "react";
+import { Badge } from "../ui/badge";
 import InviteFriend from "./InviteFriend";
 import WinnerPopup from "./WinnerPopup";
-import { Badge } from "../ui/badge";
+import { cn } from "@/lib/utils";
 
 function MainWrapper() {
   const timerRefO = useRef<CountDownHandle>(null);
@@ -98,11 +99,11 @@ function MainWrapper() {
         </div>
         <div className="col-span-4">
           <div className="mb-4">
-            <div className="ml-auto w-fit flex p-2 gap-2">
-              <CoinsIcon />
-              <div>
-                <p className="font-bold">200</p>
-              </div>
+            <div className={cn(buttonVariants({ variant: "secondary" }))}>
+              <p className="font-extrabold">200</p>
+              <Avatar className="rounded w-5 h-5">
+                <AvatarImage src="https://imagedelivery.net/cBNDGgkrsEA-b_ixIp9SkQ/sui-coin.svg/public" />
+              </Avatar>
             </div>
           </div>
 

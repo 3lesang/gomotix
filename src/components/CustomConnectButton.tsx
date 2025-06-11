@@ -15,11 +15,24 @@ import {
   useConnectWallet,
   useCurrentAccount,
   useDisconnectWallet,
+  useSuiClientQuery,
   useWallets,
 } from "@mysten/dapp-kit";
-import { ChevronDown, LogOutIcon, SettingsIcon } from "lucide-react";
+import {
+  ChevronDown,
+  LogOutIcon,
+  SettingsIcon,
+  Wallet2Icon,
+} from "lucide-react";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
+
+const formatBalance = (balance: string) => {
+  return (Number(balance) / 1_000_000_000).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
 
 function CustomConnectButton() {
   const wallets = useWallets();
@@ -27,13 +40,26 @@ function CustomConnectButton() {
   const { mutate: connect } = useConnectWallet();
   const { mutate: disconnect } = useDisconnectWallet();
 
+  const { data } = useSuiClientQuery(
+    "getBalance",
+    { owner: account?.address || "" },
+    { enabled: !!account?.address }
+  );
+
   if (account && account.address) {
     return (
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="secondary">
-            {account.address.slice(0, 4)}...
-            {account.address.slice(-4)}
+            <Wallet2Icon />
+            <Avatar className="rounded w-5 h-5">
+              <AvatarImage src="https://imagedelivery.net/cBNDGgkrsEA-b_ixIp9SkQ/sui-coin.svg/public" />
+            </Avatar>
+            {data && (
+              <p className="font-extrabold">
+                {formatBalance(data.totalBalance)}
+              </p>
+            )}
             <ChevronDown />
           </Button>
         </PopoverTrigger>
@@ -44,8 +70,8 @@ function CustomConnectButton() {
           </Button>
           <div className="h-1 border-t my-1" />
           <Button
-            variant="link"
-            className="w-full text-red-500 hover:no-underline"
+            variant="ghost"
+            className="w-full text-red-500 hover:no-underline hover:text-red-500"
             onClick={() => disconnect()}
           >
             <LogOutIcon />
