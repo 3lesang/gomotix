@@ -15,26 +15,27 @@ import { NumericFormat } from "react-number-format";
 import { z } from "zod";
 
 const formSchema = z.object({
-  password: z.string().optional(),
   stake: z.number().min(0, "Bet amount must be at least 0").default(0),
+  password: z.string().optional(),
 });
 
-export type NewGameFormValues = z.infer<typeof formSchema>;
+export type JoinGameFormValues = z.infer<typeof formSchema>;
 
-interface NewGameFormProps {
-  onSubmit?: (values: NewGameFormValues) => void;
+interface JoinGameFormProps {
+  defaultValues?: JoinGameFormValues;
+  onSubmit?: (values: JoinGameFormValues) => void;
 }
 
-export default function NewGameForm({ onSubmit }: NewGameFormProps) {
+export default function JoinGameForm({
+  onSubmit,
+  defaultValues,
+}: JoinGameFormProps) {
   const form = useForm({
-    defaultValues: {
-      password: "",
-      stake: 0,
-    },
+    defaultValues,
     resolver: zodResolver(formSchema),
   });
 
-  const handleSubmit = (values: NewGameFormValues) => {
+  const handleSubmit = (values: JoinGameFormValues) => {
     onSubmit?.(values);
   };
 
@@ -46,9 +47,10 @@ export default function NewGameForm({ onSubmit }: NewGameFormProps) {
           name="stake"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Amount</FormLabel>
+              <FormLabel>Stake</FormLabel>
               <FormControl>
                 <NumericFormat
+                  disabled
                   customInput={Input}
                   thousandSeparator=","
                   decimalScale={2}
@@ -66,30 +68,25 @@ export default function NewGameForm({ onSubmit }: NewGameFormProps) {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password (optional)</FormLabel>
+              <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Enter password (optional)"
-                  {...field}
-                />
+                <Input placeholder="New Room" {...field} type="password" />
               </FormControl>
               <FormMessage />
               <FormDescription>
-                Set a password if you want to make the room private.
+                Enter the password to join the room.
               </FormDescription>
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="w-full font-extrabold">
-          Enter Room
+        <Button type="submit" className="w-full">
+          Join Room
         </Button>
       </form>
     </Form>

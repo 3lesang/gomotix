@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { formatBalance } from "@/lib/utils";
 import {
   useConnectWallet,
   useCurrentAccount,
@@ -27,13 +28,6 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
-
-const formatBalance = (balance: string) => {
-  return (Number(balance) / 1_000_000_000).toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-};
 
 function CustomConnectButton() {
   const wallets = useWallets();

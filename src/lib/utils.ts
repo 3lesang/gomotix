@@ -58,3 +58,10 @@ export function checkWinnerMap(
 
   return null;
 }
+
+export const formatBalance = (balance: string) => {
+  return (Number(balance) / 1_000_000_000).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
