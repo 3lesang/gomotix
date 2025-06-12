@@ -1,10 +1,18 @@
 import { useGame, type Player } from "@/components/gomuku/context/GameContext";
 import { checkWinnerMap, cn } from "@/lib/utils";
 import { CircleIcon, XIcon } from "lucide-react";
+import Peer from "peerjs";
+import { useEffect } from "react";
 
 const length = 15;
 
-function Board() {
+interface BoardProps {
+  id: string;
+}
+
+const peer = new Peer();
+
+function Board({ id }: BoardProps) {
   const {
     clickedPositions,
     updateClickedPositions,
@@ -18,9 +26,14 @@ function Board() {
     setStatus,
   } = useGame();
 
+  const conn = peer.connect(id);
+
   const handleClick = (row: number, col: number) => {
     if (winner) return;
-    updateClickedPositions(row, col);
+
+    const key = `${row},${col}`;
+    conn.send({ key, symbol: currentPlayer });
+
     const result = checkWinnerMap(clickedPositions, row, col, currentPlayer);
     changePlayer();
     if (!result) return;
@@ -60,6 +73,15 @@ function Board() {
       );
     }
   };
+
+  useEffect(() => {
+    const peer = new Peer(id);
+    peer.on("connection", (conn) => {
+      conn.on("data", (data: any) => {
+        updateClickedPositions({ key: data?.key, symbol: data?.symbol });
+      });
+    });
+  }, []);
 
   return (
     <table className="border-collapse border rounded-2xl overflow-hidden">

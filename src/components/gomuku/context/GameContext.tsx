@@ -12,7 +12,13 @@ type GameContextType = {
   winner?: string;
   currentPlayer: Player;
   changePlayer: () => void;
-  updateClickedPositions: (row: number, col: number) => void;
+  updateClickedPositions: ({
+    key,
+    symbol,
+  }: {
+    key: string;
+    symbol: string;
+  }) => void;
   setGameWinner: (player?: Player) => void;
 };
 
@@ -35,11 +41,16 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const updateClickedPositions = (row: number, col: number) => {
-    const key = `${row},${col}`;
+  const updateClickedPositions = ({
+    key,
+    symbol,
+  }: {
+    key: string;
+    symbol: string;
+  }) => {
     const newMap = new Map(clickedPositions);
     if (!newMap.has(key)) {
-      newMap.set(key, currentPlayer);
+      newMap.set(key, symbol);
       setClickedPositions(newMap);
     }
   };

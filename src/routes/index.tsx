@@ -82,6 +82,8 @@ function RouteComponent() {
               key={index}
               id={room?.objectId}
               stake={room?.content?.fields?.stake!}
+              host={room?.content?.fields?.host}
+              player={room?.content?.fields?.player}
             />
           ))}
         </div>

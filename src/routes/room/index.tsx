@@ -31,7 +31,7 @@ function RouteComponent() {
   const { mutate: signAndExecute } = useSignAndExecuteTransaction();
 
   const handleSubmit = async (values: NewGameFormValues) => {
-    const { betAmount: stakeSui } = values;
+    const { stake } = values;
     if (!account) {
       return;
     }
@@ -39,7 +39,7 @@ function RouteComponent() {
       owner: account.address,
       coinType: "0x2::sui::SUI",
     });
-    const stakeMist = Math.floor(stakeSui * 1_000_000_000);
+    const stakeMist = Math.floor(stake * 1_000_000_000);
     const coin = coins.find((c) => parseInt(c.balance) >= stakeMist);
     if (!coin) {
       return;

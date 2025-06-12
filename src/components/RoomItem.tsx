@@ -17,7 +17,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { PACKAGE_ID } from "@/const";
 import { convertLargeNumberToString } from "@/lib/utils";
+import {
+  useCurrentAccount,
+  useSignAndExecuteTransaction,
+  useSuiClient,
+} from "@mysten/dapp-kit";
+import { Transaction } from "@mysten/sui/transactions";
 import { useNavigate } from "@tanstack/react-router";
 import { CopyIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
@@ -25,19 +32,64 @@ import { useState } from "react";
 interface RoomItemProps {
   id: string;
   stake: number;
+  host?: string;
+  player?: string;
 }
 
-function RoomItem({ id, stake }: RoomItemProps) {
+function RoomItem({ id, stake, host, player }: RoomItemProps) {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
+  const client = useSuiClient();
 
-  const handleSubmit = (values: JoinGameFormValues) => {
-    navigate({ to: "/room/$id", params: { id } });
-    console.log("Password submitted:", values.password);
+  const account = useCurrentAccount();
+
+  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+
+  const handleSubmit = async (values: JoinGameFormValues) => {
+    const { stake } = values;
+    if (!account) {
+      return;
+    }
+    const { data: coins } = await client.getCoins({
+      owner: account.address,
+      coinType: "0x2::sui::SUI",
+    });
+    const stakeMist = Math.floor(stake * 1_000_000_000);
+    const coin = coins.find((c) => parseInt(c.balance) >= stakeMist);
+    if (!coin) {
+      return;
+    }
+    const tx = new Transaction();
+
+    const [stakeCoin] = tx.splitCoins(tx.object(coin.coinObjectId), [
+      tx.pure.u64(stakeMist),
+    ]);
+
+    tx.moveCall({
+      target: `${PACKAGE_ID}::gomotix::join_room`,
+      arguments: [tx.object(id), stakeCoin],
+    });
+
+    signAndExecute(
+      { transaction: tx },
+      {
+        onSuccess: (result) => {
+          console.log(result);
+          navigate({ to: "/room/$id", params: { id } });
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+      }
+    );
   };
 
   const handleCardClick = () => {
+    if (account?.address === host || account?.address === player) {
+      navigate({ to: "/room/$id", params: { id } });
+      return;
+    }
     setOpen(true);
   };
 
@@ -78,11 +130,6 @@ function RoomItem({ id, stake }: RoomItemProps) {
                 <AvatarImage src="https://imagedelivery.net/cBNDGgkrsEA-b_ixIp9SkQ/sui-coin.svg/public" />
               </Avatar>
             </Badge>
-            {/* {room.password ? (
-                    <Badge variant="secondary">
-                      <KeyIcon className="h-3 w-3" />
-                    </Badge>
-                  ) : null} */}
           </div>
         </CardFooter>
       </Card>

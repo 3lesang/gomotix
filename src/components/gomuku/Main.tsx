@@ -29,8 +29,6 @@ function MainWrapper() {
     }
   );
 
-  console.log(data);
-
   const timerRefO = useRef<CountDownHandle>(null);
   const timerRefX = useRef<CountDownHandle>(null);
   const { setStatus, clear } = useGame();
@@ -56,7 +54,7 @@ function MainWrapper() {
             symbol={data?.content?.fields?.host_symbol == 1 ? 2 : 1}
           />
           <div className="h-4" />
-          <Board />
+          <Board id={id} />
           <div className="h-4" />
           <Player
             address={data?.content?.fields?.host}
