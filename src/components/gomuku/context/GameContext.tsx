@@ -1,39 +1,61 @@
+import type { RoomObject } from "@/types";
+import { useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit";
+import { useParams } from "@tanstack/react-router";
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-export type Player = "x" | "o";
+export type Symbol = "x" | "o";
+
+const SYMBOL = {
+  1: "x" as "x",
+  2: "o" as "o",
+};
 
 type GameContextType = {
+  id?: string;
   status?: "waiting" | "playing" | "finished";
   setStatus?: (status: "waiting" | "playing" | "finished") => void;
-  clickedPositions: Map<string, Player>;
+  clickedPositions: Map<string, Symbol>;
   updateWinPositions: (positions: Set<string>) => void;
   winPosition: Set<string>;
   clear?: () => void;
   winner?: string;
-  currentPlayer: Player;
+  currentPlayer: Symbol;
   changePlayer: () => void;
-  updateClickedPositions: ({
-    key,
-    symbol,
-  }: {
-    key: string;
-    symbol: string;
-  }) => void;
-  setGameWinner: (player?: Player) => void;
+  updateClickedPositions: (key: string, symbol: string) => void;
+  setGameWinner: (player?: Symbol) => void;
+  room?: RoomObject;
+  isHost: boolean;
+  isPlayer: boolean;
+  symbol: "x" | "o";
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
+  const { id } = useParams({ from: "/room/$id" });
+  const account = useCurrentAccount();
+  const { data } = useSuiClientQuery(
+    "getObject",
+    {
+      id,
+      options: { showContent: true },
+    },
+    {
+      select(data) {
+        return data?.data as RoomObject;
+      },
+    }
+  );
+
   const [status, setStatus] = useState<"waiting" | "playing" | "finished">(
     "waiting"
   );
   const [clickedPositions, setClickedPositions] = useState(new Map());
   const [winPosition, setWinPosition] = useState<Set<string>>(new Set());
 
-  const [winner, setWinner] = useState<Player | undefined>(undefined);
+  const [winner, setWinner] = useState<Symbol | undefined>(undefined);
 
-  const [currentPlayer, setCurrentPlayer] = useState<Player>("x");
+  const [currentPlayer, setCurrentPlayer] = useState<Symbol>("x");
 
   const changePlayer = () => {
     setCurrentPlayer((player) => {
@@ -41,18 +63,18 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const updateClickedPositions = ({
-    key,
-    symbol,
-  }: {
-    key: string;
-    symbol: string;
-  }) => {
-    const newMap = new Map(clickedPositions);
-    if (!newMap.has(key)) {
-      newMap.set(key, symbol);
-      setClickedPositions(newMap);
-    }
+  const isHost = account?.address == data?.content?.fields?.host;
+  const isPlayer = account?.address == data?.content?.fields?.player;
+
+  const updateClickedPositions = (key: string, symbol: string) => {
+    setClickedPositions((prev) => {
+      if (!prev.has(key)) {
+        const newMap = new Map(prev);
+        newMap.set(key, symbol);
+        return newMap;
+      }
+      return prev;
+    });
   };
 
   const updateWinPositions = (positions: Set<string>) => {
@@ -66,13 +88,24 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     setCurrentPlayer("x");
   };
 
-  const setGameWinner = (player?: Player) => {
+  const setGameWinner = (player?: Symbol) => {
     setWinner(player);
+  };
+
+  const getSymbol = (): Symbol => {
+    const hostSymbol = SYMBOL[data?.content?.fields?.host_symbol!];
+    if (isHost) return hostSymbol;
+    return hostSymbol == "o" ? "x" : "o";
   };
 
   return (
     <GameContext.Provider
       value={{
+        id: data?.objectId,
+        symbol: getSymbol(),
+        isHost,
+        isPlayer,
+        room: data,
         status,
         setStatus,
         currentPlayer,
